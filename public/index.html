@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Theo dõi Dữ liệu ESP8266</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        table { margin: 0 auto; border-collapse: collapse; width: 60%; }
+        th, td { border: 1px solid #ddd; padding: 10px; }
+        th { background-color: #4CAF50; color: white; }
+    </style>
+</head>
+<body>
+    <h1>Dữ Liệu Cảm Biến Từ ESP8266</h1>
+    <button onclick="fetchData()" style="margin-bottom: 20px; padding: 10px;">Cập nhật dữ liệu ngay</button>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Thời gian</th>
+                <th>Nhiệt độ (°C)</th>
+                <th>Độ ẩm (%)</th>
+            </tr>
+        </thead>
+        <tbody id="bangDuLieu">
+            </tbody>
+    </table>
+
+    <script>
+        async function fetchData() {
+            try {
+                const response = await fetch('/api/data');
+                const data = await response.json();
+                
+                const tbody = document.getElementById('bangDuLieu');
+                tbody.innerHTML = ''; 
+                
+                data.reverse().forEach(item => {
+                    const row = `<tr>
+                        <td>${item.thoiGian}</td>
+                        <td>${item.nhietDo}</td>
+                        <td>${item.doAm}</td>
+                    </tr>`;
+                    tbody.innerHTML += row;
+                });
+            } catch (error) {
+                console.error("Lỗi tải dữ liệu:", error);
+            }
+        }
+        setInterval(fetchData, 5000); // Tự làm mới mỗi 5 giây
+        fetchData();
+    </script>
+</body>
+</html>
